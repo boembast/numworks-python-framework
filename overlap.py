@@ -13,8 +13,3 @@ higherrect = (20,0,30,40)
 
 print(overlaps(higherrect, lowerrect))
 print(overlaps(lowerrect, higherrect))
-
-while True:
-    print("yes")
-    if overlaps(higherrect, lowerrect):
-        break

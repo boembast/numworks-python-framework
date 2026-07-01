@@ -62,12 +62,13 @@ class BaseElement:
             ay + ah > by
             )
     @staticmethod
-    def temporaryobject(self, x,y,w,h, **kwargs):
+    def temporaryobject(self, *args, **kwargs):
         """
         Create a temporary object of the same class as self with the given arguments.
         This is useful for creating temporary objects for comparison or other purposes.
+        Name is not possible to be set.
         """
-        temporary = self.__class__("temp",x,y,w,h, **kwargs)
+        temporary = self.__class__("temp", *args, **kwargs)
         temporary.appendable = False
         return temporary
 

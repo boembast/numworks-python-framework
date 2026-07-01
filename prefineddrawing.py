@@ -2,7 +2,7 @@ import kandinsky as kd
 from time import sleep
 import ion
 
-from base import *
+from base import * # FIXME: base module is to be intergrated into main code in the future.
 
 DEBUG_PRINT = True
 
@@ -17,7 +17,7 @@ class Screen:
         self._content = []
     def __name__(self):
         return self.__class__.__name__
-    def add(self,elemtype,name,**kwargs):
+    def add(self,elemtype,name,**kwargs): #TODO: Discard custom add, elements should be added as instances of BaseElement or its subclasses
         """
         The element type should be specified first, either as string or the class itself. Then the arguments for the element's constructor should be specified. The element will be created and added to the screen.
         """
@@ -47,7 +47,7 @@ class Screen:
 
 class Button(BaseInteractible):
     def __init__(self,name,label,x,y,w=None,h=None,color='blue'):
-        super().__init__(name,x,y,0,0)
+        super().__init__(name,x,y,0,0) #FIXME: width and height are set to 0 which means wasted complexity.
         self.w = w if w is not None else textpixelsize(label)[0] + 10
         self.h = h if h is not None else textpixelsize(label)[1] + 10
         self.label = label
@@ -56,7 +56,7 @@ class Button(BaseInteractible):
         self.BORDER = 1
 
     def _draw(self,force=False):
-        gottencolor = self.getcolor(selected=self.active)
+        gottencolor = self.getcolor(selected=self.active)#FIXME: Part of the subject to change for drawing system having control over active state
         kd.fill_rect(self.x,self.y,self.w,self.h, self.color)
         kd.fill_rect(self.x+self.BORDER,self.y+self.BORDER,self.w-2*self.BORDER,self.h-2*self.BORDER, gottencolor)
         kd.draw_string(self.label,self.x+5,self.y+5,'black',gottencolor)
@@ -66,7 +66,7 @@ class Button(BaseInteractible):
         """
         Toggle activation
         """
-        self.active = not self.active
+        self.active = not self.active #FIXME: this is probably not optimal, and subject to change aka the drawing system controls whether an item draws as active or not, not the item itself.
         debugprint("Activated",self.name,"now active:",self.active)
 
 class TextLabel(BaseElement):
@@ -148,10 +148,48 @@ def draw(*which):
 
 beep = Button("beep", "Beep", 0, 0, color='blue')
 boop = Button("boop", "Boop", 0, 50, color='green')
+baap = Button("baap", "Baap", 0, 100, color='red')
 container = OrderedContainer("container", 10, 10)
-container.directadd(beep,boop)
+container.directadd(beep,boop,baap)
 draw(container)
-print(container.getbounds())
-sleep(1)
-beep._activate()
-draw(container)
+
+def inputloop():
+    while True:
+        for i in [x for x in range(0,53) if x not in (7,9,10,11,35,41,47)]:
+            if ion.keydown(i):
+                return i
+
+def deactivateall():
+    for elem in draworder:
+        if isinstance(elem, BaseInteractible):
+            elem.active = False
+
+focus_index = 0
+
+ion.KEY_XNT # Interrupt key x
+while True:
+    match inputloop():
+        case ion.KEY_UP:
+            focus_index = (focus_index - 1) % len(draworder)
+            while ion.keydown(ion.KEY_UP): pass
+        case ion.KEY_DOWN:
+            focus_index = (focus_index + 1) % len(draworder)
+            while ion.keydown(ion.KEY_DOWN): pass
+        case ion.KEY_OK:
+            print("button pressed:", draworder[focus_index].name)
+            while ion.keydown(ion.KEY_OK): pass
+        case ion.KEY_XNT:
+            break
+    deactivateall()
+    draworder[focus_index]._activate()
+    draw(container)
+# print(container.getbounds())
+# while not ion.keydown(ion.KEY_OK):pass
+# beep._activate()
+# draw(container)
+# while ion.keydown(ion.KEY_OK):pass
+# while not ion.keydown(ion.KEY_OK):pass
+# beep._activate()
+# boop._activate()
+# draw(container)
+# sleep(0.1)
