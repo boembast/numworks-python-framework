@@ -1,6 +1,6 @@
 evdev==1.9.3
 ion-numworks==2.1
-kandinsky==2.7.2s
+kandinsky==2.7.2
 pynput==1.8.2
 PySDL2==0.9.17
 pysdl2-dll==2.32.10

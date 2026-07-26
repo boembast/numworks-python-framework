@@ -1,24 +1,20 @@
+from base import *
 import kandinsky as kd
-from time import sleep
 import ion
 
-from base import *
+"""
+This script is going to be for demonstrating the focus system that is going to be used in the main project. 
+Currently, I still need to figure out how I want that to work, details will be on the Obsidian vault inconveniently
+inaccessible to literally anyone except me. So I'll just update this as I go.
+"""
 
-# New kbd_intr key is going to be 14 aka KEY_XNT.
-
-#FLAGS
-BUTTON_LABEL_FORCE_FIT = False # Whether to extend a button's width to fit its label.
-DEBUG_PRINT = False # Whether to print debug information. Does not affect warnings.
-#END_FLAGS
-
-#DO NOT TOUCH
-draworder = []
+BUTTON_LABEL_FORCE_FIT = True # Whether to extend a button's width to fit its label.
 
 class Screen:
     def __init__(self,name):
         self.name=name
         self._content = []
-    def getclassname(self):
+    def __name__(self):
         return self.__class__.__name__
     def add(self,elemtype,*args,**kwargs):
         """
@@ -57,9 +53,6 @@ class Screen:
         if element:
             element._activate()
 
-    def _draw(self,overwrite=False):
-        self.draw(overwrite)
-
     def draw(self,overwrite=False):
         global draworder
         if overwrite:
@@ -67,50 +60,9 @@ class Screen:
             draworder = []
         draw(*self._content)
 
-def debugprint(*args, **kwargs):
-    if DEBUG_PRINT:
-        print(*args, **kwargs)
-
-
-
-# element_name: list(nonselected_color[, selected_color])
-colors = {
-    'DEBUG': ('pink', 'cyan'),
-    'button': ('gray', (173, 173, 255))
-}
-
-
-def getcolor(element,selected=False):
-    debugprint("Getting color for",element.__class__.__name__, "selected:", selected)
-    element = element if isinstance(element, str) else element.__class__.__name__
-    return colors.get(element, ('purple','yellow'))[1 if selected else 0]
-
-def textpixelsize(text:str):
-    lines = text.split("\n")
-    max_width = max(len(line) for line in lines)
-    height = len(lines)
-    return max_width * 10, height * 18
-
-class Rect(BaseElement):
-    def __init__(self,name,x,y,w,h,color='red'):
-        super().__init__(name,x,y,["x","y","w","h","color"])
-        self.w,self.h=w,h
-        self.color=color
-
-    def _draw(self,force=False):
-        kd.fill_rect(self.x,self.y,self.w,self.h, self.color)
-        debugprint("Drew",self.name,self.color)
-
-    def change(self,**kwargs):
-        for k,v in kwargs.items():
-            if not k in self._validprops:
-                raise ValueError("Invalid property name: {}".format(k))
-            debugprint("Changing",self.name,"property",k,"from",getattr(self,k),"to",v)
-            setattr(self, k, v)
-
 class Button(BaseInteractible):
     def __init__(self,name,x,y,w=None,h=None,color='red',label=""):
-        super().__init__(name,x,y,0,0,['x','y','w','h','color','label'])
+        super().__init__(name,x,y,['x','y','w','h','color','label'])
         self.w = w if w is not None else textpixelsize(label)[0] + 10
         self.h = h if h is not None else textpixelsize(label)[1] + 10
         self.color=color
@@ -123,7 +75,7 @@ class Button(BaseInteractible):
         self.active=False
         self.BORDER = 1
     def _draw(self,force=False):
-        gottencolor = getcolor(self, selected=self.active)
+        gottencolor = self.getcolor(self, selected=self.active)
         kd.fill_rect(self.x,self.y,self.w,self.h, self.color)
         kd.fill_rect(self.x+self.BORDER,self.y+self.BORDER,self.w-2*self.BORDER,self.h-2*self.BORDER, gottencolor)
         kd.draw_string(self.label,self.x+5,self.y+5,'black',gottencolor)
@@ -134,7 +86,7 @@ class Button(BaseInteractible):
         """
         debugprint("Activated",self.name)
         self.active=not self.active
-        gottencolor = getcolor(self, selected=self.active)
+        gottencolor = self.getcolor(self, selected=self.active)
         kd.fill_rect(self.x+self.BORDER,self.y+self.BORDER,self.w-2*self.BORDER,self.h-2*self.BORDER, gottencolor)
         kd.draw_string(self.label,self.x+5,self.y+5,'black',gottencolor)
         debugprint("Redrew",self.name,self.color)
@@ -161,29 +113,5 @@ def draw(*which):
                 i._draw()
                 # sleep(0.5)
 
-#Example elements
-# Element("test",10,10)._draw() #Prints warning to indicate that ._draw() has to be implemented in a subclass
-# beggin = rect("beggin",10,10,55,30,'red')
-# sample = rect("sample",10,20,10,10,'blue')
-# otherone = rect("otherone",10,30,10,10,'green')
-# more = rect("more",10,40,10,10,'yellow')
-# draw(beggin,sample,otherone,more)
-# sleep(1)
-# draw(beggin)
-
-# BUTTON_LABEL_FORCE_FIT = True
-
-# DEBUG_PRINT = True
-
-# firstbutton = button("testbutton",10,10,color='red',label='Test but very long text now')
-# draw(firstbutton)
-# while not ion.keydown(ion.KEY_OK): pass
-# firstbutton._activate()
-# draw(firstbutton)
-
-# home = Screen("home")
-# home.add(Button,"testbutton",10,10,color='red',label='Test but very long text now')
-# home.draw()
-# sleep(1)
-# home.find("testbutton")._activate()
-# home.draw()
+homepage = Screen("Homepage")
+homepage.add()
