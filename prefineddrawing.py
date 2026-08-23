@@ -6,6 +6,8 @@ from base import * # FIXME: base module is to be intergrated into main code in t
 
 DEBUG_PRINT = True
 
+ALL_KEYS = [x for x in range(0,53) if x not in (7,9,10,11,35,41,47)] # Constant list of all keys to improve space and time efficiency.
+
 if DEBUG_PRINT:
     print("Debug printing is enabled")
 
@@ -155,7 +157,7 @@ draw(container)
 
 def inputloop():
     while True:
-        for i in [x for x in range(0,53) if x not in (7,9,10,11,35,41,47)]:
+        for i in ALL_KEYS:
             if ion.keydown(i):
                 return i
 

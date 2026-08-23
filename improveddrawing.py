@@ -74,7 +74,7 @@ def debugprint(*args, **kwargs):
 
 
 # element_name: list(nonselected_color[, selected_color])
-colors = {
+ELEMENT_COLORS = {
     'DEBUG': ('pink', 'cyan'),
     'button': ('gray', (173, 173, 255))
 }
@@ -83,7 +83,7 @@ colors = {
 def getcolor(element,selected=False):
     debugprint("Getting color for",element.__class__.__name__, "selected:", selected)
     element = element if isinstance(element, str) else element.__class__.__name__
-    return colors.get(element, ('purple','yellow'))[1 if selected else 0]
+    return ELEMENT_COLORS.get(element, ('purple','yellow'))[1 if selected else 0]
 
 def textpixelsize(text:str):
     lines = text.split("\n")

@@ -11,14 +11,19 @@ def textpixelsize(text:str):
     height = len(lines)
     return max_width * 10, height * 18
 
-colors = {
+ELEMENT_COLORS = {
     'DEBUG': ('pink', 'cyan'),
     'Button': ('gray', (173, 173, 255)),
     'BaseElement': ('pink', 'cyan'),
     'BaseInteractible': ('pink', 'cyan')
 }
+"Colors dictionary for elements. Each element type has a tuple of (nonselected_color, selected_color). These can be a literal string color, or a 3 tuple."
 
 class BaseElement:
+    """
+    Base for any element.
+    You are required to implement _draw() in subclasses.
+    """
     def __init__(self,name,x,y,w,h,validprops=["name","x","y","w","h"]):
         if any(i < 0 for i in [x,y,w,h]):
             raise ValueError("x({}), y({}), w({}) and h({}) for {} '{}' must be non-negative".format(x, y, w, h, self.__class__.__name__, name))
@@ -30,9 +35,9 @@ class BaseElement:
     def _draw(self,force=False):
         print("Warning: {}._draw() called but not implemented".format(self.__class__.__name__))
         return "problem"
-    def getcolor(self,selected=False):
-        debugprint("Getting color for",self.__class__.__name__, "selected:", selected)
-        return colors.get(self.__class__.__name__,('purple','yellow'))[1 if selected else 0]
+    def getcolor(self):  # TODO: A custom way should be able to be provided to have an element be different colors and have those colors changed.
+        debugprint("Getting color for",self.__class__.__name__)
+        return ELEMENT_COLORS.get(self.__class__.__name__,('purple','yellow'))[0]
     def getbounds(self):
         return self.x,self.y,self.w,self.h
     def change(self,**kwargs):
@@ -73,10 +78,16 @@ class BaseElement:
         return temporary
 
 class BaseInteractible(BaseElement):
+    """
+    Base for any interactible element.
+    
+    This is a BaseElement with the requirement to be interactible.
+    """
     def __init__(self,name,x,y,w,h,validprops=None):
         super().__init__(name,x,y,w,h,validprops)
+        self.active = False
     def _activate(self):
         print("Warning: {}._activate() called but not implemented".format(self.__class__.__name__))
-    def getcolor(self,selected=False):
-        debugprint("Getting color for",self.__class__.__name__, "selected:", selected)
-        return colors.get(self.__class__.__name__,('purple','yellow'))[1 if selected else 0]
+    def getcolor(self):
+        debugprint("Getting color for",self.__class__.__name__, "selected:", self.active)
+        return ELEMENT_COLORS.get(self.__class__.__name__,('purple','yellow'))[1 if self.active else 0]
