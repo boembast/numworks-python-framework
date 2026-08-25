@@ -169,7 +169,7 @@ class KDString:
             self.y = y
             self.w = w
             self.h = h
-    def __init__(self, string, point, color1="black", color2="white"):
+    def __init__(self, string, point, color1="black", color2="white"): # FIXME: Remove color1 and color2 from the constructor, as they are not used in the struct.
         self.string = string
         self.string_old = ""
         self._struct = self.__struct(point.x(), point.y(), 0, 0)
