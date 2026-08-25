@@ -1,6 +1,6 @@
 # numworks-python-framework
 
-## This project is currently in development and does not have a version ready for use.
+## DISCLAIMER: This project is currently in development and does not have a version ready for use. It currently holds the files that are tests I have done or am doing to figure out the whereabouts of the framework. Some of the files intended to be libraries may have leftover code to test said libraries. Functionality of any file is not guaranteed.
 
 Framework for python on the Numworks graphing calculator to make GUI's (description subject to change)
 
