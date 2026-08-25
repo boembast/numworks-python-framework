@@ -2,6 +2,8 @@ import kandinsky as kd
 from time import sleep
 import ion
 
+from kdexpanded import KDRect, KDPoint, KDString
+
 # This file is for designing a predefined way for elements to draw themselves.
 
 class Drawer:
@@ -13,19 +15,17 @@ class Drawer:
         }
     def _set_pixel(self,x,y,color,_cache=False):
         if _cache:
-            return [[x,y]]
+            return KDPoint(x,y)
         kd.set_pixel(x,y,color)
     def _fill_rect(self,x,y,w,h,color,_cache=False):
         if _cache:
-            return [[x,y],[x+w,y],[x+w,y+h],[x,y+h]]
+            return KDRect(x,y,w,h)
         kd.fill_rect(x,y,w,h,color)
-    def _draw_string(self,s,x,y,color1="black",color2="white",_cache=False):
+    def _draw_string(self,s:str,x,y,color1="black",color2="white",_cache=False):
         if _cache:
-            lines = s.split("\n")
-            max_width = max(len(line) for line in lines) * 10
-            height = len(lines) * 18
-            return [[x,y],[x+max_width,y],[x+max_width,y+height],[x,y+height]]
-        kd.draw_string(s,x,y,color1,color2)
+            return KDString(s, KDPoint(x,y), color1, color2)
+        for line_number, line in enumerate(s.splitlines()):
+            kd.draw_string(line,x,y+line_number*18,color1,color2)
     def draw(self, call):
         self.elements.get(call[0], lambda: None)(*call[1:])
     def cache(self, call):
@@ -47,4 +47,5 @@ myRectangle = ("rect", 10, 10, 50, 50, "red")
 
 drawer = Drawer()
 print(drawer.cache(myRectangle))
-print(drawer.cache(("string", "Hello\nWorld", 20, 20, "black", "white")))
+
+drawer.draw(("string", "Hello\nWorld", 20, 20, "black", "white"))
