@@ -1,5 +1,9 @@
 # numworks-python-framework
+
+## This project is currently in development and does not have a version ready for use.
+
 Framework for python on the Numworks graphing calculator to make GUI's (description subject to change)
+
 
 # Using the repository yourself
 To use this repo, depending on your system you'll want to make a virtual environment. But regardless, you'll need the package list of requirements.txt which is the result of `pip freeze`. This contains all the packages needed to be installed with pip. In VS Code you can also just use the Python extension(s) to create a custom virtualenv, in which you will be able to choose something with dependencies in the choice name, where you can then put in `requirements.txt` to have VSc install the requirements at the setup. You will also need the `python3-tk`, `python3-pip` and `python3-venv` packages to create the virtual environment. These are the debian variants, I do not know what they are on other distributions / windows as of currently. There might be more packages required that I am not aware of at this time, possibly subject to change.
