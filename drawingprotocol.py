@@ -1,5 +1,4 @@
 import kandinsky as kd
-from time import sleep
 
 # This file is for designing a predefined way for elements to draw themselves.
 
