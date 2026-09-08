@@ -15,27 +15,20 @@ class KDPoint:
     def __iter__(self):
         yield self.x()
         yield self.y()
-    
-    def struct(self):
-        return self._struct
 
-    def x(self):
-        return self._struct.x
-    def y(self):
-        return self._struct.y
-    def translatedBy(self, point):
-        return KDPoint(self.x() + point.x(), self.y() + point.y())
-    def relativeTo(self, other):
-        return self.translatedBy(other.opposite())
-    def opposite(self):
-        return KDPoint(-self.x(), -self.y())
+    struct = lambda self: self._struct
+
+    x= lambda self: self._struct.x
+    y= lambda self: self._struct.y
+    translatedBy = lambda self, point: KDPoint(self.x() + point.x(), self.y() + point.y())
+    relativeTo = lambda self, other: self.translatedBy(other.opposite())
+    opposite = lambda self: KDPoint(-self.x(), -self.y())
     def __eq__(self, other):
         return self.x() == other.x() and self.y() == other.y()
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def squareDistanceTo(self, other):
-        return (self.x() - other.x())**2 + (self.y() - other.y())**2
+    squareDistanceTo = lambda self, other: (self.x() - other.x())**2 + (self.y() - other.y())**2
 
     @staticmethod
     def KDPointZero():
@@ -59,40 +52,23 @@ class KDRect:
         yield self.width()
         yield self.height()
 
-    def struct(self):
-        return self._struct
+    struct = lambda self: self._struct
+    x = lambda self: self._struct.x
+    y = lambda self: self._struct.y
+    origin = lambda self: (self.x(), self.y())
+    width = lambda self: self._struct.w
+    height = lambda self: self._struct.h
+    size = lambda self: (self.width(), self.height())
+    top = lambda self: self.y()
+    right = lambda self: self.x() + self.width() - 1
+    bottom = lambda self: self.y() + self.height() - 1
+    left = lambda self: self.x()
 
-    def x(self):
-        return self._struct.x
-    def y(self):
-        return self._struct.y
-    def origin(self):
-        return (self.x(), self.y())
-    def width(self):
-        return self._struct.w
-    def height(self):
-        return self._struct.h
-    def size(self):
-        return (self.width(), self.height())
-    def top(self):
-        return self.y()
-    def right(self):
-        return self.x() + self.width() - 1
-    def bottom(self):
-        return self.y() + self.height() - 1
-    def left(self):
-        return self.x()
-
-    def topLeft(self):
-        return (self.left(), self.top())
-    def topRight(self):
-        return (self.right(), self.top())
-    def bottomLeft(self):   
-        return (self.left(), self.bottom())
-    def bottomRight(self):
-        return (self.right(), self.bottom())
-    def isValid(self):
-        return self.width() > 0 and self.height() > 0
+    topleft = lambda self: (self.left(), self.top())
+    topRight = lambda self: (self.right(), self.top())
+    bottomLeft = lambda self: (self.left(), self.bottom())
+    bottomRight = lambda self: (self.right(), self.bottom())
+    isValid = lambda self: self.width() > 0 and self.height() > 0
 
     def __eq__(self, other):
         return (self.x() == other.x() and self.y() == other.y() and
@@ -161,6 +137,9 @@ class KDRect:
     @staticmethod
     def KDRectZero():
         return KDRect(0, 0, 0, 0)
+    @staticmethod
+    def fromtuple(tuple):
+        return KDRect(tuple[1], tuple[2], tuple[3], tuple[4])
 
 class KDString:
     class __struct:
@@ -272,3 +251,7 @@ class KDString:
             yield "next", KDRect.KDRectZero()
             for char_index, char in enumerate(line):
                 yield (char, KDRect(self.x() + char_index * 10, self.y() + line_number * 18, 10, 18))
+
+    @staticmethod
+    def fromtuple(tuple):
+        return KDString(tuple[1], KDPoint(tuple[2], tuple[3]), tuple[4], tuple[5])
