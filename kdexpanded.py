@@ -3,12 +3,10 @@
 # and easier testing across different files.
 
 class KDPoint:
-    class __struct:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
+    _STRUCT_X = 0
+    _STRUCT_Y = 1
     def __init__(self, x, y):
-        self._struct = self.__struct(x, y)
+        self.__struct = [x, y]
 
     def __repr__(self):
         return "KDPoint(x={0}, y={1})".format(self.x(), self.y())
@@ -16,10 +14,10 @@ class KDPoint:
         yield self.x()
         yield self.y()
 
-    struct = lambda self: self._struct
+    struct = lambda self: self.__struct
 
-    x= lambda self: self._struct.x
-    y= lambda self: self._struct.y
+    x= lambda self: self.__struct[self._STRUCT_X]
+    y= lambda self: self.__struct[self._STRUCT_Y]
     translatedBy = lambda self, point: KDPoint(self.x() + point.x(), self.y() + point.y())
     relativeTo = lambda self, other: self.translatedBy(other.opposite())
     opposite = lambda self: KDPoint(-self.x(), -self.y())
@@ -35,14 +33,13 @@ class KDPoint:
         return KDPoint(0, 0)
 
 class KDRect:
-    class __struct:
-        def __init__(self, x, y, w, h):
-            self.x = x
-            self.y = y
-            self.w = w
-            self.h = h
+    _STRUCT_X = 0
+    _STRUCT_Y = 1
+    _STRUCT_W = 2
+    _STRUCT_H = 3
+    
     def __init__(self, x, y, w, h):
-        self._struct = self.__struct(x, y, w, h)
+        self.__struct = [x, y, w, h]
 
     def __repr__(self):
         return "KDRect(x={0}, y={1}, w={2}, h={3})".format(self.x(), self.y(), self.width(), self.height())
@@ -52,24 +49,22 @@ class KDRect:
         yield self.width()
         yield self.height()
 
-    struct = lambda self: self._struct
-    x = lambda self: self._struct.x
-    y = lambda self: self._struct.y
+    struct = lambda self: self.__struct
+    x = lambda self: self.__struct[self._STRUCT_X]
+    y = lambda self: self.__struct[self._STRUCT_Y]
     origin = lambda self: (self.x(), self.y())
-    width = lambda self: self._struct.w
-    height = lambda self: self._struct.h
+    width = lambda self: self.__struct[self._STRUCT_W]
+    height = lambda self: self.__struct[self._STRUCT_H]
     size = lambda self: (self.width(), self.height())
     top = lambda self: self.y()
     right = lambda self: self.x() + self.width() - 1
     bottom = lambda self: self.y() + self.height() - 1
     left = lambda self: self.x()
-
     topleft = lambda self: (self.left(), self.top())
     topRight = lambda self: (self.right(), self.top())
     bottomLeft = lambda self: (self.left(), self.bottom())
     bottomRight = lambda self: (self.right(), self.bottom())
     isValid = lambda self: self.width() > 0 and self.height() > 0
-
     def __eq__(self, other):
         return (self.x() == other.x() and self.y() == other.y() and
                 self.width() == other.width() and self.height() == other.height())
@@ -77,9 +72,9 @@ class KDRect:
         return not self.__eq__(other)
 
     def setOrigin(self, point):
-        self._struct = self.__struct(point.x(), point.y(), self._struct.w, self._struct.h)
+        self.__struct[:2] = [point.x(), point.y()]
     def setSize(self, w, h):
-        self._struct = self.__struct(self._struct.x, self._struct.y, w, h)
+        self.__struct[2:] = [w, h]
 
     def translatedBy(self, point):
         return KDRect(self.x() + point.x(), self.y() + point.y(), self.width(), self.height())
@@ -142,21 +137,19 @@ class KDRect:
         return KDRect(tuple[1], tuple[2], tuple[3], tuple[4])
 
 class KDString:
-    class __struct:
-        def __init__(self, x, y, w, h):
-            self.x = x
-            self.y = y
-            self.w = w
-            self.h = h
+    _STRUCT_X = 0
+    _STRUCT_Y = 1
+    _STRUCT_W = 2
+    _STRUCT_H = 3
     def __init__(self, string, point, color1="black", color2="white"): # FIXME: Remove color1 and color2 from the constructor, as they are not used in the struct.
         self.string = string
         self.string_old = ""
-        self._struct = self.__struct(point.x(), point.y(), 0, 0)
+        self.__struct = [point.x(), point.y(), 0, 0]
         self._updateStruct()
         self.color1 = color1
         self.color2 = color2
     def __repr__(self):
-        return "KDString(s={0}, point={1}, color1={2}, color2={3})".format(self.string, self.point, self.color1, self.color2)
+        return "KDString(s={0}, point={1}, color1={2}, color2={3})".format(self.string, self.origin(), self.color1, self.color2)
     def __str__(self):
         return self.string
     def __iter__(self):
@@ -171,26 +164,26 @@ class KDString:
         lines = self.string.split("\n")
         max_width = max(len(line) for line in lines) * 10
         height = len(lines) * 18
-        self._struct = self.__struct(self._struct.x, self._struct.y, max_width, height)
+        self.__struct[2:] = max_width, height
 
     def struct(self):
         self._updateStruct()
-        return self._struct
+        return self.__struct
 
     def x(self):
         self._updateStruct()
-        return self._struct.x
+        return self.__struct[self._STRUCT_X]
     def y(self):
         self._updateStruct()
-        return self._struct.y
+        return self.__struct[self._STRUCT_Y]
     def origin(self):
         return (self.x(), self.y())
     def width(self):
         self._updateStruct()
-        return self._struct.w
+        return self.__struct[self._STRUCT_W]
     def height(self):
         self._updateStruct()
-        return self._struct.h
+        return self.__struct[self._STRUCT_H]
     def size(self):
         return (self.width(), self.height())
     def top(self):
@@ -220,7 +213,7 @@ class KDString:
         return not self.__eq__(other)
 
     def setOrigin(self, point):
-        self._struct = self.__struct(point.x(), point.y(), self._struct.w, self._struct.h)
+        self.__struct[:2] = [point.x(), point.y()]
 
     def contains(self, point):
         return (self.left() <= point.x() <= self.right() and
