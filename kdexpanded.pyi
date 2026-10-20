@@ -10,7 +10,7 @@ class KDPoint:
 
     The iterator of this class yields the x and y coordinates in order.
     """
-    def __init__(self, x: int, y: int, color1: str = "") -> None:
+    def __init__(self, x: int, y: int, color1: 'KDColor' = "") -> None:
         """
         Initializes a new KDPoint with the given coordinates.
 
@@ -83,7 +83,7 @@ class KDPoint:
         """
 
 class KDRect:
-    def __init__(self, x: int, y: int, w: int, h: int, color1: str = "") -> None: #TODO: There should also be a way to pass a tuple to the constructor, not sure how to implement that against type-checking and such yet.
+    def __init__(self, x: int, y: int, w: int, h: int, color1: 'KDColor' = "") -> None: #TODO: There should also be a way to pass a tuple to the constructor, not sure how to implement that against type-checking and such yet.
         """
         Initializes a new KDRect with the given position and size.
 
@@ -299,36 +299,147 @@ class KDRect:
         """
 
 class KDString:
+    """
+    Represents a string on the screen with position and color attributes.
+    It is special in the way that its width and height are dynamically calculated based on the string.
+    This allows for greater compatibility with KDRect.
+    """
     string: str
     string_old: str
-    color1: Union[str, tuple[int, int, int]]
-    color2: Union[str, tuple[int, int, int]]
-    def __init__(self, string, point, color1: str = 'black', color2: str = 'white') -> None: ...
+    color1: KDColor
+    color2: KDColor
+    def __init__(self, string, point, color1: 'KDColor' = 'black', color2: 'KDColor' = 'white') -> None:
+        """
+        Initializes a new KDString with the given string, position, and colors.
+
+        Args:
+            string (str): The text string to be represented.
+            point (KDPoint): The position of the string on the screen.
+            color1 (KDColor, optional): The primary color of the string. Defaults to 'black'.
+            color2 (KDColor, optional): The secondary color of the string. Defaults to 'white'.
+
+        Note:
+            The colors can be specified as either a string (e.g., 'red') or a tuple of RGB values (e.g., (255, 0, 0)).
+        """
     def __iter__(self): ...
-    def __len__(self) -> int: ...
-    def struct(self): ...
-    def x(self): ...
-    def y(self): ...
-    def origin(self): ...
-    def width(self): ...
-    def height(self): ...
-    def size(self): ...
-    def top(self): ...
-    def right(self): ...
-    def bottom(self): ...
-    def left(self): ...
-    def topLeft(self): ...
-    def topRight(self): ...
-    def bottomLeft(self): ...
-    def bottomRight(self): ...
-    def isValid(self): ...
+    def __len__(self) -> int:
+        """
+        Returns the length of the string.
+        """
+    def struct(self):
+        """
+        Returns the internal structure of the KDString as a list containing the position and size.
+        The structure is in the format [x, y, width, height].
+        """
+    def x(self):
+        """
+        Returns the x-coordinate of the position of the KDString.
+        """
+    def y(self): 
+        """
+        Returns the y-coordinate of the position of the KDString.
+        """
+    def origin(self):
+        """
+        Returns the position of the KDString as a tuple (x, y).
+        """
+    def width(self): 
+        """
+        Returns the width of the KDString, calculated based on the length of the line with the most amount of characters.
+        """
+    def height(self):
+        """
+        Returns the height of the KDString, calculated based on the number of lines in the string.
+        """
+    def size(self):
+        """
+        Returns the size of the KDString as a tuple (width, height).
+        """
+    def top(self):
+        """
+        Returns the y-coordinate of the top edge of the KDString.
+        """
+    def right(self):
+        """
+        Returns the x-coordinate of the right edge of the KDString.
+        This is calculated as x + width - 1
+        """
+    def bottom(self):
+        """
+        Returns the y-coordinate of the bottom edge of the KDString.
+        This is calculated as y + height - 1
+        """
+    def left(self):
+        """
+        Returns the x-coordinate of the left edge of the KDString.
+        This is calculated as x.
+        """
+    def topLeft(self):
+        """
+        Returns the position of the top-left corner of the KDString as a tuple (x, y).
+        """
+    def topRight(self):
+        """
+        Returns the position of the top-right corner of the KDString as a tuple (x, y).
+        """
+    def bottomLeft(self):
+        """
+        Returns the position of the bottom-left corner of the KDString as a tuple (x, y).
+        """
+    def bottomRight(self):
+        """
+        Returns the position of the bottom-right corner of the KDString as a tuple (x, y).
+        """
+    def isValid(self):
+        """
+        Returns True if the KDString has a positive width and height, otherwise False.
+        """
     def __eq__(self, other): ...
     def __ne__(self, other): ...
-    def setOrigin(self, point) -> None: ...
-    def contains(self, point): ...
-    def containsRect(self, other): ...
-    def isEmpty(self): ...
-    def charpos(self, index): ...
-    def yieldcharrect(self) -> Generator[Incomplete]: ...
+    def setOrigin(self, point) -> None:
+        """
+        Sets the origin (top-left corner) of the KDString to the given KDPoint.
+
+        Args:
+            point (KDPoint): The new origin point for the string.
+        """
+    def contains(self, point):
+        """
+        Whether the given KDPoint is inside the string.
+        Edge counts as inside.
+
+        Args:
+            point (KDPoint): The point to check for containment within self.
+        """
+    def containsRect(self, other):
+        """
+        Whether the given KDRect is completely inside the string.
+        Edge counts as inside.
+
+        Args:
+            other (KDRect): The rectangle to check for containment within self.
+        """
+    def isEmpty(self):
+        """
+        Whether the width or height is not positive (`<= 0`).
+        """
+    def charpos(self, index):
+        """
+        Returns the rectangle of the first-found character at the given index as a KDRect.
+        The index is zero-based, and if the index is out of bounds, it returns None.
+
+        Args:
+            index (int): The index of the character in the string.
+        """
+    def yieldcharrect(self) -> Generator[tuple[str, KDRect], None, None]:
+        """
+        Yields tuples of characters and their corresponding rectangles (KDRect) for each character in the string.
+        The rectangles are calculated based on the position and size of the string.
+        Whenever a newline character is encountered, yield returns `('next', KDRect.KDRectZero())` instead.
+        ^ The functionality a bit more nuanced, but this is the gist of it.
+
+        Yields:
+            tuple[str, KDRect]: A tuple containing a character and its corresponding rectangle.
+        """
     @staticmethod
     def fromtuple(tuple): ...

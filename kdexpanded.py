@@ -240,13 +240,13 @@ class KDString:
     def setOrigin(self, point):
         self.__struct[:2] = [point.x(), point.y()]
 
-    def contains(self, point):
+    def contains(self, point): #BUG: This method calculates if the point is within the total rectangle of the string, while the string may not be a rectangle.
         return (self.left() <= point.x() <= self.right() and
                 self.top() <= point.y() <= self.bottom())
-    def containsRect(self, other):
+    def containsRect(self, other): #BUG: This method calculates if the rectangle is within the total rectangle of the string, while the string may not be a rectangle.
         return (self.left() <= other.left() and self.right() >= other.right() and
                 self.top() <= other.top() and self.bottom() >= other.bottom())
-    def isEmpty(self):
+    def isEmpty(self): # FIXME: This method should just check if the string is empty, still a bit cheaper, something like `return not self.string`
         return self.width() <= 0 or self.height() <= 0
 
     def charpos(self, index):
@@ -266,9 +266,10 @@ class KDString:
     def yieldcharrect(self):
         lines = self.string.split("\n")
         for line_number,line in enumerate(lines):
-            yield "next", KDRect.KDRectZero()
             for char_index, char in enumerate(line):
                 yield (char, KDRect(self.x() + char_index * 10, self.y() + line_number * 18, 10, 18))
+            if line_number < len(lines) - 1:
+                yield "next", KDRect.KDRectZero()
 
     @staticmethod
     def fromtuple(tuple):
