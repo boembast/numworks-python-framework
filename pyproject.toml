@@ -1,0 +1,21 @@
+[project]
+name = "numworks-python-framework"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "boembast", email = "108672406+boembast@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "ion-numworks>=2.1",
+    "kandinsky>=2.7.2",
+    "pip>=26.2.1",
+]
+
+[project.scripts]
+numworks-python-framework = "numworks_python_framework:main"
+
+[build-system]
+requires = ["uv_build>=0.13.3,<0.14.0"]
+build-backend = "uv_build"
