@@ -136,12 +136,18 @@ class KDString:
         self.string_old = self.string
         lines = self.string.split("\n")
         self.__struct[2:] = max(len(line) for line in lines) * 10, len(lines) * 18
-    struct = lambda self: self.__struct
+    def struct(self):
+        self._updateStruct()
+        return self.__struct
     x = lambda self: self.__struct[self._STRUCT_X]
     y = lambda self: self.__struct[self._STRUCT_Y]
     origin = lambda self: (self.x(), self.y())
-    width = lambda self: self.__struct[self._STRUCT_W]
-    height = lambda self: self.__struct[self._STRUCT_H]
+    def width(self):
+        self._updateStruct()
+        return self.__struct[self._STRUCT_W]
+    def height(self):
+        self._updateStruct()
+        return self.__struct[self._STRUCT_H]
     size = lambda self: (self.width(), self.height())
     top = lambda self: self.y()
     right = lambda self: self.x() + self.width() - 1
@@ -157,10 +163,8 @@ class KDString:
                 self.width() == other.width() and self.height() == other.height())
     def __ne__(self, other):
         return not self.__eq__(other)
-
     def setOrigin(self, point):
         self.__struct[:2] = [point.x(), point.y()]
-
     def contains(self, point):
         return (self.left() <= point.x() <= self.right() and
                 self.top() <= point.y() <= self.bottom())
@@ -169,8 +173,7 @@ class KDString:
                 self.top() <= other.top() and self.bottom() >= other.bottom())
     def isEmpty(self):
         return self.width() <= 0 or self.height() <= 0
-
-    def charpos(self, index):
+    def charpos(self, index): # TODO: Is this necessary? Could be removed
         if index < 0 or index >= len(self.string):
             raise IndexError("Index out of range")
         lines = self.string.split("\n")
@@ -185,8 +188,7 @@ class KDString:
         raise IndexError("Index out of range")
 
     def yieldcharrect(self):
-        lines = self.string.split("\n")
-        for line_number,line in enumerate(lines):
+        for line_number,line in enumerate(self.string.split("\n")):
             yield "next", KDRect.KDRectZero()
             for char_index, char in enumerate(line):
                 yield (char, KDRect(self.x() + char_index * 10, self.y() + line_number * 18, 10, 18))

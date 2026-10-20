@@ -3,10 +3,10 @@
 # and easier testing across different files.
 
 class KDPoint:
-    _STRUCT_X = 0
-    _STRUCT_Y = 1
-    def __init__(self, x, y):
-        self.__struct = [x, y]
+    _STRUCT_X = 0 # Index of x-coordinate in the internal structure
+    _STRUCT_Y = 1 # Index of y-coordinate in the internal structure
+    def __init__(self, x, y,color1=""):
+        self.__struct,self.color1 = [x, y], color1
 
     def __repr__(self):
         return "KDPoint(x={0}, y={1})".format(self.x(), self.y())
@@ -14,32 +14,39 @@ class KDPoint:
         yield self.x()
         yield self.y()
 
-    struct = lambda self: self.__struct
+    def struct(self):
+        return self.__struct
 
-    x= lambda self: self.__struct[self._STRUCT_X]
-    y= lambda self: self.__struct[self._STRUCT_Y]
-    translatedBy = lambda self, point: KDPoint(self.x() + point.x(), self.y() + point.y())
-    relativeTo = lambda self, other: self.translatedBy(other.opposite())
-    opposite = lambda self: KDPoint(-self.x(), -self.y())
+    def x(self):
+        return self.__struct[self._STRUCT_X]
+    def y(self):
+        return self.__struct[self._STRUCT_Y]
+    def translatedBy(self, point):
+        return KDPoint(self.x() + point.x(), self.y() + point.y())
+    def relativeTo(self, other):
+        return self.translatedBy(other.opposite())
+    def opposite(self):
+        return KDPoint(-self.x(), -self.y())
     def __eq__(self, other):
         return self.x() == other.x() and self.y() == other.y()
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    squareDistanceTo = lambda self, other: (self.x() - other.x())**2 + (self.y() - other.y())**2
+    def squareDistanceTo(self, other):
+        return (self.x() - other.x())**2 + (self.y() - other.y())**2
 
     @staticmethod
     def KDPointZero():
         return KDPoint(0, 0)
 
-class KDRect:
+class KDRect: #TODO: Consider whether KDRect and KDString should have color attributes, as they are not in the C++ version of Kandinsky, but our usecase of these classes differs from the C++ version.
     _STRUCT_X = 0
     _STRUCT_Y = 1
     _STRUCT_W = 2
     _STRUCT_H = 3
     
-    def __init__(self, x, y, w, h):
-        self.__struct = [x, y, w, h]
+    def __init__(self, x, y, w, h,color1=""):
+            self.__struct, self.color1 = [x, y, w, h], color1
 
     def __repr__(self):
         return "KDRect(x={0}, y={1}, w={2}, h={3})".format(self.x(), self.y(), self.width(), self.height())
@@ -49,22 +56,40 @@ class KDRect:
         yield self.width()
         yield self.height()
 
-    struct = lambda self: self.__struct
-    x = lambda self: self.__struct[self._STRUCT_X]
-    y = lambda self: self.__struct[self._STRUCT_Y]
-    origin = lambda self: (self.x(), self.y())
-    width = lambda self: self.__struct[self._STRUCT_W]
-    height = lambda self: self.__struct[self._STRUCT_H]
-    size = lambda self: (self.width(), self.height())
-    top = lambda self: self.y()
-    right = lambda self: self.x() + self.width() - 1
-    bottom = lambda self: self.y() + self.height() - 1
-    left = lambda self: self.x()
-    topleft = lambda self: (self.left(), self.top())
-    topRight = lambda self: (self.right(), self.top())
-    bottomLeft = lambda self: (self.left(), self.bottom())
-    bottomRight = lambda self: (self.right(), self.bottom())
-    isValid = lambda self: self.width() > 0 and self.height() > 0
+    def struct(self):
+        return tuple(self.__struct)
+    
+    def x(self):
+        return self.__struct[self._STRUCT_X]
+    def y(self):
+        return self.__struct[self._STRUCT_Y]
+    def origin(self):
+        return (self.x(), self.y())
+    def width(self):
+        return self.__struct[self._STRUCT_W]
+    def height(self):
+        return self.__struct[self._STRUCT_H]
+    def size(self):
+        return (self.width(), self.height())
+    def top(self):
+        return self.y()
+    def right(self):
+        return self.x() + self.width() - 1
+    def bottom(self):
+        return self.y() + self.height() - 1
+    def left(self):
+        return self.x()
+    
+    def topLeft(self):
+        return (self.left(), self.top())
+    def topRight(self):
+        return (self.right(), self.top())
+    def bottomLeft(self):   
+        return (self.left(), self.bottom())
+    def bottomRight(self):
+        return (self.right(), self.bottom())
+    def isValid(self):
+        return self.width() > 0 and self.height() > 0
     def __eq__(self, other):
         return (self.x() == other.x() and self.y() == other.y() and
                 self.width() == other.width() and self.height() == other.height())
