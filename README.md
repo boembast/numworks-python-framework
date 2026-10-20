@@ -23,4 +23,4 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 If you are uncomfortable with piping scripts into bash (or PowerShell), you can check out other options [here](https://docs.astral.sh/uv/getting-started/installation/).
 
-After this, ==I don't know what to do yet, I'm going to test it out now==
+After this, you run `uv sync` to install the dependencies and then you can use the virtual environment like normal. It comes with two packages; ion-numworks and kandinsky. As the names suggest, they are for emulating the calculators's python functionality. It also comes with `pip` so that VS Code can work with the virtual environment. 
