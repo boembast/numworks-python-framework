@@ -83,6 +83,7 @@ class KDPoint:
         """
 
 class KDRect:
+    color1: KDColor
     def __init__(self, x: int, y: int, w: int, h: int, color1: 'KDColor' = "") -> None: #TODO: There should also be a way to pass a tuple to the constructor, not sure how to implement that against type-checking and such yet.
         """
         Initializes a new KDRect with the given position and size.
@@ -339,7 +340,7 @@ class KDString:
         """
         Returns the y-coordinate of the position of the KDString.
         """
-    def origin(self):
+    def origin(self) -> tuple[int, int]:
         """
         Returns the position of the KDString as a tuple (x, y).
         """
