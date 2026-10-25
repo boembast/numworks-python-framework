@@ -249,28 +249,6 @@ class KDString:
     def isEmpty(self): # FIXME: This method should just check if the string is empty, still a bit cheaper, something like `return not self.string`
         return self.width() <= 0 or self.height() <= 0
 
-    def charpos(self, index):
-        if index < 0 or index >= len(self.string):
-            raise IndexError("Index out of range")
-        lines = self.string.split("\n")
-        current_index = 0
-        for line_number, line in enumerate(lines):
-            if current_index + len(line) > index:
-                char_x = (index - current_index) * 10
-                char_y = line_number * 18
-                print(line_number, line, current_index, index, line[index - current_index])
-                return KDRect(self.x() + char_x, self.y() + char_y, 10, 18)
-            current_index += len(line)
-        raise IndexError("Index out of range")
-
-    def yieldcharrect(self):
-        lines = self.string.split("\n")
-        for line_number,line in enumerate(lines):
-            for char_index, char in enumerate(line):
-                yield (char, KDRect(self.x() + char_index * 10, self.y() + line_number * 18, 10, 18))
-            if line_number < len(lines) - 1:
-                yield "next", KDRect.KDRectZero()
-
     @staticmethod
     def fromtuple(tuple):
         return KDString(tuple[1], KDPoint(tuple[2], tuple[3]), tuple[4], tuple[5])
