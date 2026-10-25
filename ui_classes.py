@@ -30,7 +30,7 @@ class Button(KDRect):
     def _draw(self):
         kd.fill_rect(self.x(),self.y(),self.width(),self.height(), "#555555")
         kd.fill_rect(self.x()+self.border,self.y()+self.border,self.width()-self.border*2,self.height()-self.border*2, self.color1)
-        kd.draw_string(self.text.string,*self.text.origin(), self.text.color1, self.text.color2)
+        kd.draw_string(self.text.string,self.text.x(),self.text.y(), self.text.color1, self.text.color2)
     def width(self):
         return self.text.width() + 10
     def height(self):
@@ -50,6 +50,7 @@ class Input(KDRect):
     def _draw(self):
         kd.fill_rect(self.x(),self.y(),self.width(),self.height(), "#555555")
         kd.fill_rect(self.x()+self.border,self.y()+self.border,self.width()-self.border*2,self.height()-self.border*2, self.color1)
+        kd.draw_string(self.input.string,self.input.x(),self.input.y(), self.input.color1, self.input.color2)
     def width(self):
         return super().width()
     def height(self):
@@ -73,7 +74,7 @@ class Toggle(KDRect):
     def _draw(self):
         kd.fill_rect(self.x(),self.y(),self.width(),self.height(), "#555555")
         kd.fill_rect(self.x()+self.border,self.y()+self.border,self.width()-self.border*2,self.height()-self.border*2, self.color1)
-        kd.draw_string("[" + ("x" if self.state else " ") + "]" + self.text.string,*self.text.origin(), self.text.color1, self.text.color2)
+        kd.draw_string("[" + ("x" if self.state else " ") + "]" + self.text.string,self.text.x(),self.text.y(), self.text.color1, self.text.color2)
     def width(self):
         return self.text.width() + 40
     def height(self):
