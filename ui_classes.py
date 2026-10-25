@@ -59,3 +59,27 @@ class Button(KDRect):
     def setSize(self, width, height):
         pass # Buttons should not be resized, they should be resized by changing the label.
 
+class Input(KDRect):
+    def __init__(self,name,x,y,w,h,color):
+        self.name = name
+        self.input = KDString("",KDPoint(x+5,y+5),'black',color)
+        super().__init__(x,y,w,h,color)
+    def _draw(self):
+        kd.fill_rect(self.x(),self.y(),self.width(),self.height(), self.color1)
+        kd.draw_string(self.input.string,*self.input.origin(), self.input.color1, self.input.color2)
+    def x(self):
+        return super().x()
+    def y(self):
+        return super().y()
+    def width(self):
+        return super().width()
+    def height(self):
+        return super().height()
+    def setOrigin(self, point):
+        super().setOrigin(point)
+        self.input.setOrigin(point.translatedBy(KDPoint(5,5)))
+    def setSize(self, width, height):
+        super().setSize(width, height)
+    def setText(self, text):
+        self.input.string = text
+        self._draw()
