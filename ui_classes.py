@@ -9,24 +9,9 @@ DEBUG_PRINT = False # Whether to print debug information.
 
 from kdexpanded import *
 
-ELEMENT_COLORS = {
-    'DEBUG': ('pink', 'cyan'),
-    'Button': ('gray', (173, 173, 255)),
-    'BaseElement': ('pink', 'cyan'),
-    'BaseInteractible': ('pink', 'cyan')
-}
-
 def debugprint(*args, **kwargs):
     if DEBUG_PRINT:
         print(*args, **kwargs)
-
-class BaseElement(KDRect):
-    def __init__(self,name,x,y,w,h):
-        self.name = name
-        super().__init__(x,y,w,h)
-    def _draw(self):
-        print("Warning: {}._draw() called but not implemented".format(self.__class__.__name__))
-        return "problem"
 
 class Text(KDString):
     def __init__(self,name,x,y,text,color='', bg=''):
@@ -39,16 +24,11 @@ class Text(KDString):
 class Button(KDRect):
     def __init__(self,name,x,y,label,color='red'):
         self.name = name
-        self.focus = False
         self.text = KDString(label,KDPoint(x+5, y+5),'black',color)
         super().__init__(x,y,self.text.width()+10,self.text.height()+10,color)
     def _draw(self):
         kd.fill_rect(self.x(),self.y(),self.width(),self.height(), self.color1)
         kd.draw_string(self.text.string,*self.text.origin(), self.text.color1, self.text.color2)
-    def x(self):
-        return super().x()
-    def y(self):
-        return super().y()
     def width(self):
         return self.text.width() + 10
     def height(self):
@@ -67,10 +47,6 @@ class Input(KDRect):
     def _draw(self):
         kd.fill_rect(self.x(),self.y(),self.width(),self.height(), self.color1)
         kd.draw_string(self.input.string,*self.input.origin(), self.input.color1, self.input.color2)
-    def x(self):
-        return super().x()
-    def y(self):
-        return super().y()
     def width(self):
         return super().width()
     def height(self):
@@ -83,3 +59,20 @@ class Input(KDRect):
     def setText(self, text):
         self.input.string = text
         self._draw()
+
+class Toggle(KDRect):
+    def __init__(self,name,x,y,label,color):
+        self.name = name
+        self.state = False
+        self.text = KDString(label,KDPoint(x+5, y+5),'black',color)
+        super().__init__(x,y,self.text.width()+40,self.text.height()+10,color)
+    def _draw(self):
+        kd.fill_rect(self.x(),self.y(),self.width(),self.height(), self.color1)
+        kd.draw_string("[" + ("x" if self.state else " ") + "]" + self.text.string,*self.text.origin(), self.text.color1, self.text.color2)
+    def width(self):
+        return self.text.width() + 40
+    def height(self):
+        return self.text.height() + 10
+    def setOrigin(self, point):
+        super().setOrigin(point)
+        self.text.setOrigin(point.translatedBy(KDPoint(5,5)))
